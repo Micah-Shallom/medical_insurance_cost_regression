@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request
 import joblib
 import numpy as np
+from sklearn.ensemble import GradientBoostingRegressor
 
 app = Flask(__name__)
 
 # Load your model and label encoder
-model = joblib.load('your_model.joblib')
-label_encoder = joblib.load('your_label_encoder.pkl')
+label_encoder = joblib.load('../model/label_encoder.pkl')
+model = joblib.load('../model/gradient_boosting.pkl')
 
 @app.route('/')
 def home():
@@ -24,9 +25,9 @@ def predict():
         region = request.form['region']
         
         # Perform label encoding
-        sex_encoded = label_encoder['sex'].transform([sex])[0]
-        smoker_encoded = label_encoder['smoker'].transform([smoker])[0]
-        region_encoded = label_encoder['region'].transform([region])[0]
+        sex_encoded = label_encoder.fit_transform([sex])[0]
+        smoker_encoded = label_encoder.fit_transform([smoker])[0]
+        region_encoded = label_encoder.fit_transform([region])[0]
         
         # Create feature vector
         features = [age, sex_encoded, bmi, children, smoker_encoded, region_encoded]
